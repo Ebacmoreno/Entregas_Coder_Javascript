@@ -25,29 +25,49 @@ const productos =[
 ];
 
 // Uso de función map para aplicar descuento del 10% a todos los productos
+function aplicarDcto(productos, dcto) {
+  const productosconDcto = productos.map(producto => {
+      return {
+          ...producto,
+          precio: Number(producto.precio *(1- dcto/100)).toFixed(0)
+      };
+  });
+  console.log(`Productos con ${dcto}% de descuento aplicado:`); 
+  console.log(productosconDcto);
+  return productosconDcto;
+// Colocar un try para que el dcto esté entre 0 y 100
+}
 
-const productosconDcto = productos.map(producto => {let dcto = 10;
-    return {
-        ...producto,
-        precio: Number(producto.precio *(1- dcto/100)).toFixed(0)
-    };
-});
+//Probamos la función con disintos dctos:
+aplicarDcto(productos, 10);
+aplicarDcto(productos, 25);
+aplicarDcto(productos, 50);
+
 
 // DOM
 
 const contenedorProductos = document.querySelector(".productos");
 
-// function renderProductos() {
-//   contenedorProductos.innerHTML = productos.map(producto => `
-//     <div class="producto-card" data-id="${producto.id}">
-//       <h3>${producto.nombre}</h3>
-//       <p>Categoria: ${producto.categoria}</p>
-//       <p>Precio: $${producto.precio}</p>
-//       <button class="btn-agregar" data-id="${producto.id}">Agregar al carrito</button>
-//     </div>
-//   `).join("");
-// }
+ function mostrarProductos() {
+   contenedorProductos.innerHTML = productos.map(producto => `
+     <div class="producto-card" data-id="${producto.id}">
+       <h3>${producto.nombre}</h3>
+       <p>Categoria: ${producto.categoria}</p>
+       <p>Precio: $${producto.precio}</p>
+       <button class="btn-agregar" data-id="${producto.id}">Agregar al carrito</button>
+     </div>
+   `).join("");
+}
 
-// renderProductos();
+mostrarProductos();
+
+//Carrito de compras
 
 // ---- Eventos --- //
+const botonesAgregar = document.querySelectorAll('.btn-agregar');
+
+botonesAgregar.forEach(boton => {
+  boton.addEventListener('click', ()=>{
+    console.log('Producto agregado al carrito');
+  });
+});
