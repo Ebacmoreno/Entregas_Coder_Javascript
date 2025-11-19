@@ -63,6 +63,22 @@ mostrarProductos();
 
 //Carrito de compras
 
+let carrito = [];
+
+function agregarAlCarrito(id) {
+  const producto = productos.find(p => p.id === id);
+  const enCarrito = carrito,.find(p => p.id === id);
+
+  if (enCarrito) {
+    enCarrito.cantidad++;
+  } else {
+    carrito.push({ ...producto, cantidad: 1 });
+  }
+  
+  console.log(`Producto ${producto.nombre} agregado al carrito.`);
+  console.log(carrito);
+}
+
 // ---- Eventos --- //
 const botonesAgregar = document.querySelectorAll('.btn-agregar');
 

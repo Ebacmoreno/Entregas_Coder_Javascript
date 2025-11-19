@@ -1,24 +1,89 @@
-// Array de productos
+// Definición de clase Producto
+class Producto {
+  constructor(id, nombre, precio, atributos, imagen) {
+    this.id = id;
+    this.nombre = nombre;
+    this.precio = precio;
+    this.atributos = atributos; // array con distintas palabras/ tags como: género, tipo, subtipo,...
+    this.imagen = imagen;
+  }
+}
+
+// Array de productos usando la clase Producto
 const productos = [
-  { id: 1, nombre: "Producto 1", precio: 29.99, imagen: "👕" },
-  { id: 2, nombre: "Producto 2", precio: 39.99, imagen: "👔" },
-  { id: 3, nombre: "Producto 3", precio: 49.99, imagen: "👗" },
-  { id: 4, nombre: "Producto 4", precio: 34.99, imagen: "👖" },
-  { id: 5, nombre: "Producto 5", precio: 44.99, imagen: "🧥" },
-  { id: 6, nombre: "Producto 6", precio: 24.99, imagen: "👕" },
-  { id: 7, nombre: "Producto 7", precio: 54.99, imagen: "👗" },
-  { id: 8, nombre: "Producto 8", precio: 19.99, imagen: "🧢" }
+  new Producto(1, "Polera básica", 29.99, ["unisex", "top", "polera"], "👕"),
+  new Producto(2, "Camisa formal", 39.99, ["hombre", "top", "camisa"], "👔"),
+  new Producto(3, "Vestido elegante", 49.99, ["mujer", "dress", "vestido"], "👗"),
+  new Producto(4, "Jeans clásicos", 34.99, ["unisex", "bottom", "jeans"], "👖"),
+  new Producto(5, "Abrigo de invierno", 44.99, ["unisex", "coat"], "🧥"),
+  new Producto(6, "Remera estampada", 24.99, ["mujer", "top", "polera"], "👕"),
+  new Producto(7, "Vestido casual", 54.99, ["mujer", "dress", "vestido"], "👗"),
+  new Producto(8, "Gorra deportiva", 19.99, ["unisex", "accesorio"], "🧢")
 ];
 
 // Array del carrito
 let carrito = [];
 
-// Función para renderizar productos
+// Obtener todos los atributos únicos de los productos
+function obtenerAtributosUnicos() {
+  const setAtributos = new Set();
+  productos.forEach(p => p.atributos.forEach(a => setAtributos.add(a)));
+  return Array.from(setAtributos).sort();
+}
+
+// Renderizar los filtros de atributos
+function renderizarFiltrosAtributos() {
+  const atributos = obtenerAtributosUnicos();
+  const contenedorFiltros = document.getElementById("filtros-atributos");
+  contenedorFiltros.innerHTML = "";
+  atributos.forEach(attr => {
+    const label = document.createElement("label");
+    label.style.marginRight = "10px";
+    label.innerHTML = `<input type="checkbox" value="${attr}" class="filtro-atributo"> ${attr}`;
+    contenedorFiltros.appendChild(label);
+  });
+}
+
+// Obtener los atributos seleccionados
+function obtenerAtributosSeleccionados() {
+  return Array.from(document.querySelectorAll('.filtro-atributo:checked')).map(cb => cb.value);
+}
+
+// Guardar filtros en sessionStorage
+function guardarFiltrosEnSession() {
+  const seleccionados = obtenerAtributosSeleccionados();
+  sessionStorage.setItem('filtrosSeleccionados', JSON.stringify(seleccionados));
+}
+
+// Recuperar filtros de sessionStorage
+function recuperarFiltrosDeSession() {
+  const data = sessionStorage.getItem('filtrosSeleccionados');
+  if (data) {
+    try {
+      return JSON.parse(data);
+    } catch {
+      return [];
+    }
+  }
+  return [];
+}
+
+// Renderizar productos filtrados
 function renderizarProductos() {
   const contenedorProductos = document.getElementById("productos");
   contenedorProductos.innerHTML = "";
-
-  productos.forEach(producto => {
+  const atributosSeleccionados = obtenerAtributosSeleccionados();
+  let productosFiltrados = productos;
+  if (atributosSeleccionados.length > 0) {
+    productosFiltrados = productos.filter(producto =>
+      atributosSeleccionados.every(attr => producto.atributos.includes(attr))
+    );
+  }
+  if (productosFiltrados.length === 0) {
+    contenedorProductos.innerHTML = "<p>No hay productos que coincidan con los filtros seleccionados.</p>";
+    return;
+  }
+  productosFiltrados.forEach(producto => {
     const divProducto = document.createElement("div");
     divProducto.classList.add("producto");
     divProducto.innerHTML = `
@@ -103,22 +168,47 @@ function renderizarCarrito() {
 // Función para comprar
 function comprar() {
   if (carrito.length === 0) {
-    alert("El carrito está vacío");
+    Swal.fire({
+      title: "El carrito está vacío",
+      icon: "info"
+    });
     return;
   }
 
-  if (confirm("¿Estás seguro de que deseas realizar esta compra?")) {
+  Swal.fire({
+    title: "¿Estás seguro?",
+    text: "¡No podrás revertir esta acción!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Sí, comprar!",
+    cancelButtonText: "Cancelar"
+  }).then((result) => {
+    if (result.isConfirmed) {
     // Guardar en localStorage
     localStorage.setItem("ultimaCompra", JSON.stringify(carrito));
     
-    // Mostrar mensaje de éxito
-    alert("¡Compra realizada con éxito!");
-    
-    // Limpiar carrito y reiniciar página
-    carrito = [];
-    location.reload();
-  }
+    // Mostrar mensaje de éxito con SweetAlert2
+      Swal.fire({
+        title: "¡Compra realizada!",
+        text: "Tu compra ha sido registrada.",
+      icon: "success"
+    }).then(() => {
+      // Limpiar carrito y reiniciar página
+      carrito = [];
+      location.reload();
+      // Limpiar filtros después de la compra
+         sessionStorage.removeItem('filtrosSeleccionados');
+       });
+    }
+  });
 }
+
+// Guardar el carrito en localStorage al cerrar la ventana
+window.addEventListener("beforeunload", () => {
+  localStorage.setItem("carritoGuardado", JSON.stringify(carrito));
+});
 
 // Función para mostrar última compra
 function mostrarUltimaCompra() {
@@ -131,6 +221,39 @@ function mostrarUltimaCompra() {
 
 // Inicializar la aplicación
 document.addEventListener("DOMContentLoaded", () => {
-  renderizarProductos();
+  // Recuperar carrito guardado si existe
+  const carritoGuardado = localStorage.getItem("carritoGuardado");
+  if (carritoGuardado) {
+    try {
+      carrito = JSON.parse(carritoGuardado);
+    } catch (e) {
+      carrito = [];
+    }
+  }
+  renderizarFiltrosAtributos();
+  // Recuperar filtros seleccionados y marcarlos
+  const seleccionados = recuperarFiltrosDeSession();
+  if (seleccionados.length > 0) {
+    setTimeout(() => {
+      document.querySelectorAll('.filtro-atributo').forEach(cb => {
+        if (seleccionados.includes(cb.value)) cb.checked = true;
+      });
+      renderizarProductos();
+    }, 0);
+  } else {
+    renderizarProductos();
+  }
+  renderizarCarrito();
   mostrarUltimaCompra();
+  // Escuchar cambios en los filtros
+  document.getElementById("filtros-atributos").addEventListener("change", () => {
+    guardarFiltrosEnSession();
+    renderizarProductos();
+  });
+  // Botón limpiar filtros
+  document.getElementById("btn-limpiar-filtros").addEventListener("click", () => {
+    document.querySelectorAll('.filtro-atributo:checked').forEach(cb => cb.checked = false);
+    guardarFiltrosEnSession();
+    renderizarProductos();
+  });
 });
