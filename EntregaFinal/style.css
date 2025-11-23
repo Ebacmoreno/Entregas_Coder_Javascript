@@ -72,8 +72,24 @@ h2 {
 }
 
 .imagen {
-    font-size: 3em;
+    /* Contenedor de imagen: altura fija para mantener el layout y centrar la imagen */
+    height: 200px; /* ajusta según diseño; mantiene las tarjetas del mismo tamaño */
     margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background-color: #ffffff; /* evita ver el fondo del layout cuando la imagen tiene espacio vacío */
+    border-radius: 6px;
+}
+
+/* Estilos para imágenes de producto: mostrar la imagen completa sin recortar */
+.imagen img {
+    width: auto;        /* dejar que la imagen mantenga su proporción */
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* muestra la imagen completa, sin recortar */
+    display: block;
 }
 
 .producto h3 {
@@ -83,25 +99,26 @@ h2 {
 }
 
 .precio {
-    color: #e74c3c;
+    color: #000000;
     font-weight: bold;
     font-size: 1.2em;
     margin-bottom: 15px;
 }
 
 .producto button {
-    background-color: #3498db;
-    color: white;
+    background-color: #95a5a6; /* gris claro */
+    color: #ffffff;
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
     font-size: 1em;
-    transition: background-color 0.3s;
+    transition: background-color 0.2s, transform 0.08s;
 }
 
 .producto button:hover {
-    background-color: #2980b9;
+    background-color: #7f8c8d; /* gris más oscuro al pasar el ratón */
+    transform: translateY(-1px);
 }
 
 #carrito-items {
@@ -153,7 +170,8 @@ h2 {
 
 .subtotal {
     font-weight: bold;
-    color: #e74c3c;
+    /* Subtotal en gris para diferenciar del precio principal */
+    color: #7f8c8d;
     min-width: 60px;
     text-align: right;
 }
@@ -175,7 +193,8 @@ h2 {
 #total-carrito {
     font-size: 1.3em;
     font-weight: bold;
-    color: #e74c3c;
+    /* Mantener el total legible en negro */
+    color: #000000;
     margin-bottom: 15px;
     text-align: center;
 }

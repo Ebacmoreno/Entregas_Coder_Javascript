@@ -11,14 +11,14 @@ class Producto {
 
 // Array de productos usando la clase Producto
 const productos = [
-  new Producto(1, "Polera básica", 29.99, ["unisex", "top", "polera"], "👕"),
-  new Producto(2, "Camisa formal", 39.99, ["hombre", "top", "camisa"], "👔"),
-  new Producto(3, "Vestido elegante", 49.99, ["mujer", "dress", "vestido"], "👗"),
-  new Producto(4, "Jeans clásicos", 34.99, ["unisex", "bottom", "jeans"], "👖"),
-  new Producto(5, "Abrigo de invierno", 44.99, ["unisex", "coat"], "🧥"),
-  new Producto(6, "Remera estampada", 24.99, ["mujer", "top", "polera"], "👕"),
-  new Producto(7, "Vestido casual", 54.99, ["mujer", "dress", "vestido"], "👗"),
-  new Producto(8, "Gorra deportiva", 19.99, ["unisex", "accesorio"], "🧢")
+  new Producto(1, "Polera básica", 29.99, ["unisex", "top", "polera"], "imgs/polera.webp"),
+  new Producto(2, "Camisa formal", 39.99, ["hombre", "top", "camisa"], "imgs/camisa.jpeg"),
+  new Producto(3, "Vestido elegante", 49.99, ["mujer", "dress", "vestido"], "imgs/vestidoelegante.jpeg"),
+  new Producto(4, "Jeans clásicos", 34.99, ["unisex", "bottom", "jeans"], "imgs/jeans.webp"),
+  new Producto(5, "Abrigo de invierno", 44.99, ["unisex", "coat"], "imgs/abrigo.webp"),
+  new Producto(6, "Remera estampada", 24.99, ["mujer", "top", "polera"], "imgs/poleraestampada.jpg"),
+  new Producto(7, "Vestido casual", 54.99, ["mujer", "dress", "vestido"], "imgs/vestidocausal.jpeg"),
+  new Producto(8, "Gorra deportiva", 19.99, ["unisex", "accesorio"], "imgs/cap.avif")
 ];
 
 // Array del carrito
@@ -87,7 +87,7 @@ function renderizarProductos() {
     const divProducto = document.createElement("div");
     divProducto.classList.add("producto");
     divProducto.innerHTML = `
-      <div class="imagen">${producto.imagen}</div>
+      <div class="imagen"><img src="${producto.imagen}" alt="${producto.nombre}" loading="lazy" width="400" height="400"></div>
       <h3>${producto.nombre}</h3>
       <p class="precio">$${producto.precio.toFixed(2)}</p>
       <button onclick="agregarAlCarrito(${producto.id})">Agregar al carrito</button>
